@@ -5,9 +5,11 @@ import:
   subpackages:
   - assert
 - package: github.com/ashwanthkumar/golang-utils
+  version: master
   subpackages:
   - sets
   - worker
+  - sync
 - package: github.com/parnurzeal/gorequest
   version: v0.2.15
 - package: github.com/PuerkitoBio/goquery

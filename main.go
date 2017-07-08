@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/ashwanthkumar/golang-utils/sets"
@@ -21,10 +22,11 @@ var ToCrawl Queue
 // Might not be very efficient to store them all in memory, but a persistent store
 // for this problem is an overkill at this point.
 var Crawled sets.Set
-var workerPool worker.Pool
 
 // TargetHost contains the target host that we need to crawl
 var TargetHost string
+
+var workerPool worker.Pool
 
 func main() {
 	if len(os.Args) < 2 {
@@ -48,6 +50,10 @@ func main() {
 		case url := <-ToCrawl:
 			log.Printf("Found url to add to work - %v\n", url)
 			workerPool.AddWork(url)
+		case <-time.Tick(30 * time.Second):
+			if workerPool.Count() == 0 {
+				running = false
+			}
 		}
 	}
 }

@@ -1,12 +1,13 @@
-hash: ae70c0bf8ac5f40b1eb7d9b4d906a88384880dd8aead6f5e6839e63f392c7bc2
-updated: 2017-07-08T17:10:17.96381117+05:30
+hash: e2fb54ecc14769035ab5bc7cac298620e09723b148d6864baa453ede15f5d4e7
+updated: 2017-07-08T19:01:15.891092583+05:30
 imports:
 - name: github.com/andybalholm/cascadia
   version: 349dd0209470eabd9514242c688c403c0926d266
 - name: github.com/ashwanthkumar/golang-utils
-  version: 1a6217810a73989dc6437e4a942f08e455ae9da3
+  version: ba5f8f17e0e2335f14627b6d6b39be38b49bd596
   subpackages:
   - sets
+  - sync
   - worker
 - name: github.com/hashicorp/errwrap
   version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
