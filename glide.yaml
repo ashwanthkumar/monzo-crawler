@@ -1,0 +1,14 @@
+package: github.com/ashwanthkumar/monzo-crawler
+import:
+- package: github.com/stretchr/testify
+  version: v1.1.4
+  subpackages:
+  - assert
+- package: github.com/ashwanthkumar/golang-utils
+  subpackages:
+  - sets
+  - worker
+- package: github.com/parnurzeal/gorequest
+  version: v0.2.15
+- package: github.com/PuerkitoBio/goquery
+  version: v1.1.0

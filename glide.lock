@@ -1,0 +1,41 @@
+hash: ae70c0bf8ac5f40b1eb7d9b4d906a88384880dd8aead6f5e6839e63f392c7bc2
+updated: 2017-07-08T17:10:17.96381117+05:30
+imports:
+- name: github.com/andybalholm/cascadia
+  version: 349dd0209470eabd9514242c688c403c0926d266
+- name: github.com/ashwanthkumar/golang-utils
+  version: 1a6217810a73989dc6437e4a942f08e455ae9da3
+  subpackages:
+  - sets
+  - worker
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: 83588e72410abfbe4df460eeb6f30841ae47d4c4
+- name: github.com/moul/http2curl
+  version: 4e24498b31dba4683efb9d35c1c8a91e2eda28c8
+- name: github.com/parnurzeal/gorequest
+  version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- name: github.com/PuerkitoBio/goquery
+  version: e1271ee34c6a305e38566ecd27ae374944907ee9
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
+- name: golang.org/x/net
+  version: 054b33e6527139ad5b1ec2f6232c3b175bd9a30c
+  subpackages:
+  - html
+  - html/atom
+  - publicsuffix
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
