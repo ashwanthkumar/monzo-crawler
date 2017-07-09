@@ -26,12 +26,12 @@ const BUFFER_SIZE = 512
 var MAX_FETCHERS = runtime.NumCPU() * 4
 
 // ToCrawl is a queue of all pending urls that we have discovered and yet to crawl
-var ToCrawl Queue
+var ToCrawl Queue = make(Queue, BUFFER_SIZE)
 
 // Crawled contains list of all urls we've crawled so far.
 // Might not be very efficient to store them all in memory, but a persistent store
 // for this problem is an overkill at this point.
-var Crawled sets.Set
+var Crawled sets.Set = sets.Empty()
 var CrawledLock sync.RWMutex
 
 // TargetHost contains the target host that we need to crawl
@@ -46,8 +46,6 @@ func main() {
 		os.Exit(1)
 	}
 	TargetHost := os.Args[1]
-	ToCrawl = make(Queue, BUFFER_SIZE)
-	Crawled = sets.Empty()
 	workerPool = worker.Pool{
 		MaxWorkers: MAX_FETCHERS,
 		Op:         Crawl,
@@ -102,7 +100,7 @@ func Crawl(req worker.Request) error {
 		return err
 	}
 
-	links := ExtractAllOutgoingUrls(doc, url)
+	links := ExtractAllOutgoingUrls(doc, url, TargetHost, Crawled)
 	for _, u := range links {
 		ToCrawl <- u
 	}
@@ -110,49 +108,6 @@ func Crawl(req worker.Request) error {
 	sitemapManager.AddInfo(NewUrlInfo(url, links, assets))
 
 	return err
-}
-
-// ExtractAllOutgoingUrls parses the given html document and returns all urls from the page
-func ExtractAllOutgoingUrls(doc *goquery.Document, pageurl string) []string {
-	CrawledLock.RLock()
-	defer CrawledLock.RUnlock()
-	allUrls := doc.Find("a").FilterFunction(func(i int, s *goquery.Selection) bool {
-		value, exists := s.Attr("href")
-		if exists && IsSameHostName(value, TargetHost) {
-			resolvedUrl := ResolveUrl(value, pageurl)
-			return !Crawled.Contains(resolvedUrl)
-		}
-		return false
-	}).Map(func(i int, s *goquery.Selection) string {
-		value, _ := s.Attr("href")
-		resolvedUrl := ResolveUrl(value, pageurl)
-		return resolvedUrl
-	})
-
-	return allUrls
-}
-
-// ExtractAllAssetsOnPage parses the given html document and returns all urls of the
-// assets on the page - img, link, script etc.
-func ExtractAllAssetsOnPage(doc *goquery.Document, pageurl string) []string {
-	assetUrls := doc.Find("img,link,script").FilterFunction(func(i int, s *goquery.Selection) bool {
-		_, srcExists := s.Attr("src")
-		_, hrefExists := s.Attr("href")
-		return srcExists || hrefExists
-	}).Map(func(i int, s *goquery.Selection) string {
-		srcValue, exists := s.Attr("src")
-		var value string
-		if exists {
-			value = srcValue
-		} else {
-			hrefValue, _ := s.Attr("href")
-			value = hrefValue
-		}
-		resolvedUrl := ResolveUrl(value, pageurl)
-		return resolvedUrl
-	})
-
-	return assetUrls
 }
 
 func PrintSitemap(url string) {
