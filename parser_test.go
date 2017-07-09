@@ -11,21 +11,21 @@ import (
 )
 
 func TestExtractAllOutgoingUrls(t *testing.T) {
-	doc := parseDocument(t, "tests/htmls/tomblomfield_home.html")
+	doc := parseDocument(t, "tests/fixtures/tomblomfield_home.html")
 	outgoingUrls := ExtractAllOutgoingUrls(doc, "http://tomblomfield.com/", "tomblomfield.com", sets.Empty())
 	assert.Len(t, outgoingUrls, 22)
 
-	doc = parseDocument(t, "tests/htmls/a9_echo.html")
+	doc = parseDocument(t, "tests/fixtures/a9_echo.html")
 	outgoingUrls = ExtractAllOutgoingUrls(doc, "https://www.amazon.com/dp/B01DFKC2SO?psc=1", "www.amazon.com", sets.Empty())
 	assert.Len(t, outgoingUrls, 100)
 }
 
 func TestExtractAssetsOnPage(t *testing.T) {
-	doc := parseDocument(t, "tests/htmls/tomblomfield_home.html")
+	doc := parseDocument(t, "tests/fixtures/tomblomfield_home.html")
 	assetUrls := ExtractAllAssetsOnPage(doc, "http://tomblomfield.com/")
 	assert.Len(t, assetUrls, 15)
 
-	doc = parseDocument(t, "tests/htmls/a9_echo.html")
+	doc = parseDocument(t, "tests/fixtures/a9_echo.html")
 	assetUrls = ExtractAllAssetsOnPage(doc, "https://www.amazon.com/dp/B01DFKC2SO?psc=1")
 	assert.Len(t, assetUrls, 108)
 }
