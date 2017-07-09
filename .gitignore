@@ -1,3 +1,4 @@
 monzo-crawler*
 vendor/
+*.log
 
