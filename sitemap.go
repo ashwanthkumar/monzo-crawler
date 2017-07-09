@@ -15,15 +15,15 @@ type UrlInfo struct {
 	Assets       sets.Set
 }
 
-func NewUrlInfo(url string, links, assets []string) UrlInfo {
-	return UrlInfo{
+func NewUrlInfo(url string, links, assets []string) *UrlInfo {
+	return &UrlInfo{
 		FetchedUrl:   url,
 		OutgoingUrls: sets.FromSlice(links),
 		Assets:       sets.FromSlice(assets),
 	}
 }
 
-type Listener chan UrlInfo
+type Listener chan *UrlInfo
 
 // SitemapManager represents a mapping of each url to it's corresponding outgoing
 // urls and assets for the page
@@ -71,7 +71,7 @@ func (s *SitemapManager) InfoFor(url string) *UrlInfo {
 }
 
 // AddInfo adds a particular UrlInfo to the sitemap
-func (s *SitemapManager) AddInfo(urlInfo UrlInfo) {
+func (s *SitemapManager) AddInfo(urlInfo *UrlInfo) {
 	s.wait.Add(1)
 	s.listener <- urlInfo
 }
@@ -81,10 +81,12 @@ func (s *SitemapManager) start() {
 	for running {
 		select {
 		case item := <-s.listener:
-			log.Printf("[DEBUG] Updating sitemap for url=%s, links=%d, assets=%d\n", item.FetchedUrl, item.OutgoingUrls.Size(), item.Assets.Size())
-			s.addLinks(item.FetchedUrl, item.OutgoingUrls)
-			s.addAssets(item.FetchedUrl, item.Assets)
-			s.wait.Done()
+			if nil != item {
+				log.Printf("[DEBUG] Updating sitemap for url=%s, links=%d, assets=%d\n", item.FetchedUrl, item.OutgoingUrls.Size(), item.Assets.Size())
+				s.addLinks(item.FetchedUrl, item.OutgoingUrls)
+				s.addAssets(item.FetchedUrl, item.Assets)
+				s.wait.Done()
+			}
 		case <-s.stop:
 			running = false
 		}
