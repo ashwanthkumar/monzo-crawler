@@ -1,4 +1,5 @@
 monzo-crawler*
 vendor/
 *.log
+.DS_Store
 
