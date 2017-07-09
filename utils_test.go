@@ -18,3 +18,7 @@ func TestResolveUrl(t *testing.T) {
 	assert.Equal(t, "http://ashwanthkumar.in/", ResolveUrl("/", "http://ashwanthkumar.in/about"))
 	assert.Equal(t, "http://ashwanthkumar.in/archive", ResolveUrl("/archive", "http://ashwanthkumar.in/about"))
 }
+
+func TestToUrl(t *testing.T) {
+	assert.Equal(t, "http://ashwanthkumar.in", DomainToUrl("ashwanthkumar.in"))
+}

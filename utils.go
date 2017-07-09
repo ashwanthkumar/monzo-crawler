@@ -22,6 +22,17 @@ func IsSameHostName(rawurl, targetHost string) bool {
 	}
 }
 
+// ToUrl takes a domain name and converts it to a proper crawlable url
+func DomainToUrl(domain string) string {
+	u, err := url.Parse(domain)
+	if err != nil {
+		return domain
+	}
+
+	u.Scheme = "http"
+	return u.String()
+}
+
 // ResolveUrl resolves the rawurl with pageurl
 func ResolveUrl(rawurl, pageurl string) string {
 	u, err := url.Parse(rawurl)
