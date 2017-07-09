@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"sync"
 
 	"github.com/ashwanthkumar/golang-utils/sets"
+	"github.com/ashwanthkumar/golang-utils/sync"
 )
 
 // Item represents an object of the fetchedUrl, all outgoing urls we followed through from the page
@@ -31,8 +31,10 @@ type SitemapManager struct {
 	links    map[string]sets.Set
 	assets   map[string]sets.Set
 	listener Listener
-	_running bool
-	wait     sync.WaitGroup
+
+	// fields used for sync
+	stop chan bool
+	wait sync.CountWG
 }
 
 // NewSitemapManager returns a new instance of SitemapManager
@@ -41,23 +43,18 @@ func NewSitemapManager(listenerBuffer int) *SitemapManager {
 	s := SitemapManager{
 		links:    make(map[string]sets.Set),
 		assets:   make(map[string]sets.Set),
+		stop:     make(chan bool),
 		listener: make(Listener, listenerBuffer),
-		_running: true,
 	}
 	go s.start()
 	return &s
-}
-
-// Listener returns a channel to which we can push Item structs to add it to Sitemap
-func (s *SitemapManager) Listener() Listener {
-	return s.listener
 }
 
 // Stop stops the listener channel and the update loop. You can't push any more items
 // to this sitemap listener post this
 func (s *SitemapManager) Stop() {
 	s.wait.Wait()
-	s._running = false
+	close(s.stop)
 	close(s.listener)
 }
 
@@ -80,31 +77,26 @@ func (s *SitemapManager) AddInfo(urlInfo UrlInfo) {
 }
 
 func (s *SitemapManager) start() {
-	for s._running {
+	running := true
+	for running {
 		select {
 		case item := <-s.listener:
-			s.wait.Done()
 			log.Printf("[DEBUG] Updating sitemap for url=%s, links=%d, assets=%d\n", item.FetchedUrl, item.OutgoingUrls.Size(), item.Assets.Size())
 			s.addLinks(item.FetchedUrl, item.OutgoingUrls)
 			s.addAssets(item.FetchedUrl, item.Assets)
+			s.wait.Done()
+		case <-s.stop:
+			running = false
 		}
 	}
 }
 
 func (s *SitemapManager) addLinks(url string, links sets.Set) {
-	s.links[url] = s.getOrEmptyLinks(url).Union(links)
+	s.links[url] = s.getOrEmpty(url, s.links).Union(links)
 }
 
 func (s *SitemapManager) addAssets(url string, links sets.Set) {
-	s.assets[url] = s.getOrEmptyLinks(url).Union(links)
-}
-
-func (s *SitemapManager) getOrEmptyLinks(url string) sets.Set {
-	return s.getOrEmpty(url, s.links)
-}
-
-func (s *SitemapManager) getOrEmptyAssets(url string) sets.Set {
-	return s.getOrEmpty(url, s.assets)
+	s.assets[url] = s.getOrEmpty(url, s.assets).Union(links)
 }
 
 func (s *SitemapManager) getOrEmpty(url string, collection map[string]sets.Set) sets.Set {
