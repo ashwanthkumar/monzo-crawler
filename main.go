@@ -56,7 +56,7 @@ func main() {
 	sitemapManager = NewSitemapManager(BUFFER_SIZE)
 
 	log.Printf("Starting to crawl %s\n", TargetHost)
-	homePage := "http://" + TargetHost
+	homePage := DomainToUrl(TargetHost)
 	ToCrawl <- homePage
 	running := true
 	for running {
