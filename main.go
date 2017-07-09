@@ -91,7 +91,8 @@ func Crawl(req worker.Request) error {
 	}
 
 	CrawledLock.Lock()
-	Crawled.Add(url)
+	Crawled.Add(resp.Request.URL.String()) // url from Location header if it's redirected
+	Crawled.Add(url)                       // fetched url
 	CrawledLock.Unlock()
 
 	log.Printf("Fetched url=%s statusCode=%d\n", url, resp.StatusCode)
