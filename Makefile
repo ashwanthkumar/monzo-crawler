@@ -2,7 +2,7 @@ APPNAME = monzo-crawler
 VERSION = 0.0.1-dev
 
 test:
-	go test -v github.com/ashwanthkumar/monzo-crawler
+	go test -v -race github.com/ashwanthkumar/monzo-crawler
 
 setup:
 	glide install
