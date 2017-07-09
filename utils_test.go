@@ -1,7 +1,10 @@
 package main
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestGetHostname(t *testing.T) {
 	host, err := GetHostname("http://ashwanthkumar.in/resume.pdf")

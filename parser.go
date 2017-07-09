@@ -1,7 +1,9 @@
 package main
 
-import "github.com/PuerkitoBio/goquery"
-import "github.com/ashwanthkumar/golang-utils/sets"
+import (
+	"github.com/PuerkitoBio/goquery"
+	"github.com/ashwanthkumar/golang-utils/sets"
+)
 
 // ExtractAllOutgoingUrls parses the given html document and returns all urls from the page
 func ExtractAllOutgoingUrls(doc *goquery.Document, pageurl, targetHost string, crawledSoFar sets.Set) []string {
